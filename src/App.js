@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import './App.css';
-import Quiz from './components/Quiz';
-import Timer from './components/Timer';
-import Start from './components/Start';
+import { useEffect, useMemo, useState } from "react";
+import "./App.css";
+import Quiz from "./components/Quiz";
+import Timer from "./components/Timer";
+import Start from "./components/Start";
 
 function App() {
-
-  const [username,setUsername] = useState(null)
-  const [questionNumber,setQuestionNumber] = useState(1)
-  const [stop,setStop] = useState(false)
-  const [earned,setEarned] = useState("0")
+  const [username, setUsername] = useState(null);
+  const [questionNumber, setQuestionNumber] = useState(1);
+  const [stop, setStop] = useState(false);
+  const [earned, setEarned] = useState("0");
+  const [quizStarted, setQuizStarted] = useState(false);
 
   const data = [
     {
@@ -36,7 +36,8 @@ function App() {
     },
     {
       id: 2,
-      question: "Grand Central Terminal, Park Avenue, New York is the world's..",
+      question:
+        "Grand Central Terminal, Park Avenue, New York is the world's..",
       options: [
         {
           text: "largest railway station",
@@ -58,7 +59,8 @@ function App() {
     },
     {
       id: 3,
-      question: "For which of the following disciplines is Nobel Prize awarded?",
+      question:
+        "For which of the following disciplines is Nobel Prize awarded?",
       options: [
         {
           text: "Physics and Chemistry",
@@ -102,7 +104,8 @@ function App() {
     },
     {
       id: 5,
-      question: "The territory of Porus who offered strong resistance to Alexander was situated between the rivers of",
+      question:
+        "The territory of Porus who offered strong resistance to Alexander was situated between the rivers of",
       options: [
         {
           text: "Sutlej and Beas",
@@ -146,7 +149,8 @@ function App() {
     },
     {
       id: 7,
-      question: "The latitudinal differences in pressure delineate a number of major pressure zones, which correspond with",
+      question:
+        "The latitudinal differences in pressure delineate a number of major pressure zones, which correspond with",
       options: [
         {
           text: "zones of cyclonic depressions",
@@ -256,7 +260,8 @@ function App() {
     },
     {
       id: 12,
-      question: "What is part of a database that holds only one type of information?",
+      question:
+        "What is part of a database that holds only one type of information?",
       options: [
         {
           text: "Report",
@@ -300,7 +305,8 @@ function App() {
     },
     {
       id: 14,
-      question: "In which decade with the first transatlantic radio broadcast occur?",
+      question:
+        "In which decade with the first transatlantic radio broadcast occur?",
       options: [
         {
           text: "1850s",
@@ -322,7 +328,8 @@ function App() {
     },
     {
       id: 15,
-      question: "Which was the 1st non Test playing country to beat India in an international match?",
+      question:
+        "Which was the 1st non Test playing country to beat India in an international match?",
       options: [
         {
           text: "Canada",
@@ -341,68 +348,116 @@ function App() {
           correct: false,
         },
       ],
-    }
-  ]
+    },
+  ];
 
-  const moneyPyramid = useMemo(() =>
-    [
-      {id:1, amount:'500'},
-      {id:2, amount:'1000'},
-      {id:3, amount:'2000'},
-      {id:4, amount:'3000'},
-      {id:5, amount:'4000'},
-      {id:6, amount:'5000'},
-      {id:7, amount:'10000'},
-      {id:8, amount:'25000'},
-      {id:9, amount:'50000'},
-      {id:10, amount:'75000'},
-      {id:11, amount:'100000'},
-      {id:12, amount:'125000'},
-      {id:13, amount:'250000'},
-      {id:14, amount:'500000'},
-      {id:15, amount:'1000000'}
-    ].reverse(),
-  [])
+  const moneyPyramid = useMemo(
+    () =>
+      [
+        { id: 1, amount: "500" },
+        { id: 2, amount: "1000" },
+        { id: 3, amount: "2000" },
+        { id: 4, amount: "3000" },
+        { id: 5, amount: "4000" },
+        { id: 6, amount: "5000" },
+        { id: 7, amount: "10000" },
+        { id: 8, amount: "25000" },
+        { id: 9, amount: "50000" },
+        { id: 10, amount: "75000" },
+        { id: 11, amount: "100000" },
+        { id: 12, amount: "125000" },
+        { id: 13, amount: "250000" },
+        { id: 14, amount: "500000" },
+        { id: 15, amount: "1000000" },
+      ].reverse(),
+    [],
+  );
 
   useEffect(() => {
-    questionNumber > 1 && setEarned(moneyPyramid.find((m) => m.id === questionNumber - 1).amount)
-  },[moneyPyramid, questionNumber]);
-  
+    questionNumber > 1 &&
+      setEarned(moneyPyramid.find((m) => m.id === questionNumber - 1).amount);
+  }, [moneyPyramid, questionNumber]);
+
   return (
-    <div className="app d-flex" style={{height:'100vh',backgroundColor:'#020230',color:'white'}}>
+    <div
+      className="app d-flex"
+      style={{ height: "100vh", backgroundColor: "#020230", color: "white" }}
+    >
       {username ? (
         <>
-          <div className="main d-flex" style={{width:'75%',flexDirection:'column'}}>
-        {stop ? ( <h1 className='endText'> You Earned : {earned} </h1> ) : (
-        <>
-          <div className="top" style={{height:'50%',position:'relative'}}>
-            <div className="timer" style={{width:'70px',height:'70px',borderRadius:'50%',border:'5px solid #ffffff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'30px',fontWeight:'700',position:'absolute',bottom:'30px',left:'100px'}}> <Timer setStop={setStop} questionNumber={questionNumber} /> </div>
+          <div
+            className="main d-flex"
+            style={{ width: "75%", flexDirection: "column" }}
+          >
+            {stop ? (
+              <h1 className="endText"> You Earned : {earned} </h1>
+            ) : (
+              <>
+                {quizStarted && (
+                  <div
+                    className="top"
+                    style={{ height: "50%", position: "relative" }}
+                  >
+                    <div
+                      className="timer"
+                      style={{
+                        width: "70px",
+                        height: "70px",
+                        borderRadius: "50%",
+                        border: "5px solid #ffffff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "30px",
+                        fontWeight: "700",
+                        position: "absolute",
+                        bottom: "30px",
+                        left: "100px",
+                      }}
+                    >
+                      <Timer
+                        setStop={setStop}
+                        questionNumber={questionNumber}
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className="bottom" style={{ height: "50%" }}>
+                  <Quiz
+                    data={data}
+                    setStop={setStop}
+                    questionNumber={questionNumber}
+                    setQuestionNumber={setQuestionNumber}
+                    onQuizStart={() => setQuizStarted(true)}
+                  />
+                </div>
+              </>
+            )}
           </div>
-          <div className="bottom" style={{height:'50%'}}>
-             <Quiz
-               data={data} 
-               setStop={setStop} 
-               questionNumber={questionNumber}
-               setQuestionNumber={setQuestionNumber}
-             />
+          <div
+            className="pyramid d-flex justify-content-center align-items-center"
+            style={{ width: "25%" }}
+          >
+            <ul
+              className="money"
+              style={{ listStyle: "none", width: "100%", padding: "20px" }}
+            >
+              {moneyPyramid.map((m) => (
+                <li
+                  className={
+                    questionNumber === m.id ? "moneyItem active" : "moneyItem"
+                  }
+                >
+                  <span className="moneyItemNumber"> {m.id} </span>
+                  <span className="moneyItemAmount"> &#8377; {m.amount} </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </>
-        )}
-      </div>
-      <div className="pyramid d-flex justify-content-center align-items-center" style={{width:'25%'}}>
-        <ul className='money' style={{listStyle:'none',width:'100%',padding:'20px'}}>
-          {moneyPyramid.map((m)=>(
-            <li className={questionNumber === m.id ? "moneyItem active" : "moneyItem"}>
-            <span className='moneyItemNumber'> {m.id} </span>
-            <span className='moneyItemAmount'> &#8377; {m.amount} </span>
-          </li>
-          ))}
-          
-        </ul>
-      </div>
-        </>
-      ) : <Start setUsername={setUsername}/>}
-      
+      ) : (
+        <Start setUsername={setUsername} />
+      )}
     </div>
   );
 }
