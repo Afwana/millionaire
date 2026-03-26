@@ -71,7 +71,9 @@ export function Quiz({
       });
 
       delay(6200, () => {
-        setShowNextQuestionLabel(true);
+        if (questionNumber < data.length) {
+          setShowNextQuestionLabel(true);
+        }
       });
 
       delay(8200, () => {
@@ -79,7 +81,11 @@ export function Quiz({
         setShowNextQuestionLabel(false);
         setSelectedAnswer(null);
         setClassName("option");
-        setQuestionNumber((prev) => prev + 1);
+        if (questionNumber >= data.length) {
+          setStop(true);
+        } else {
+          setQuestionNumber((prev) => prev + 1);
+        }
       });
     } else {
       delay(1200, () => {
