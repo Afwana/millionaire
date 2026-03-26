@@ -5,15 +5,21 @@ import correct from "../assets/correct.mp3";
 import wrong from "../assets/wrong.mp3";
 
 export function Quiz({
+  username,
   data,
   setStop,
   questionNumber,
   setQuestionNumber,
+  currentQuestionAmount,
   onQuizStart,
+  onAnswerSelected,
 }) {
   const [question, setQuestion] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [className, setClassName] = useState("option");
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [showNextQuestionLabel, setShowNextQuestionLabel] = useState(false);
+  const [showSorry, setShowSorry] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showQuestionLabel, setShowQuestionLabel] = useState(false);
   const [letsPlay] = useSound(play);
@@ -53,55 +59,86 @@ export function Quiz({
   };
 
   const handleClick = (a) => {
+    if (selectedAnswer) return;
+    if (onAnswerSelected) onAnswerSelected();
     setSelectedAnswer(a);
     setClassName("option active");
-    delay(3000, () =>
-      setClassName(a.correct ? "option correct" : "option wrong"),
-    );
-    delay(5000, () => {
-      if (a.correct) {
+    if (a.correct) {
+      delay(1200, () => {
         correctAnswer();
-        delay(1000, () => {
-          setQuestionNumber((prev) => prev + 1);
-          setSelectedAnswer(null);
-        });
-      } else {
+        setShowNextQuestionLabel(false);
+        setShowCongrats(true);
+      });
+
+      delay(6200, () => {
+        setShowNextQuestionLabel(true);
+      });
+
+      delay(8200, () => {
+        setShowCongrats(false);
+        setShowNextQuestionLabel(false);
+        setSelectedAnswer(null);
+        setClassName("option");
+        setQuestionNumber((prev) => prev + 1);
+      });
+    } else {
+      delay(1200, () => {
         wrongAnswer();
-        delay(1000, () => {
-          setStop(true);
-        });
-      }
-    });
+        setShowSorry(true);
+      });
+
+      delay(8200, () => {
+        setShowSorry(false);
+        setStop(true);
+      });
+    }
   };
   return (
     <div>
       {/* when get in to after username */}
-      {showWelcome && (
-        <div className="start">
-          <div className="welcomeUser">
-            <p>Hey, Username! Let's start...</p>
-            {showQuestionLabel && (
-              <p className="after3s">Question No: 1</p>
-            )}
+      <div className="quizcontainer">
+        {showWelcome && (
+          <div className="start">
+            <div className="welcomeUser">
+              <p>Hey, {username}! Let's start...</p>
+              {showQuestionLabel && <p className="after3s">Question No: 1</p>}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       {/* start quiz, if correct - play correctAnswer with text of earned money after correctAnswer sound play sound letsPlay with text of Question No, if wrong play wrongAnswer with text of earned money after wrongAnswer sound play sound end with text of Thnak you */}
       {!showWelcome && (
         <div className="quiz">
-          <div className="question"> {question?.question} </div>
-          <div className="options">
-            {question?.options.map((a) => (
-              <div
-                key={a.text}
-                className={selectedAnswer === a ? className : "option"}
-                onClick={() => handleClick(a)}
-              >
-                {" "}
-                {a.text}{" "}
+          {showCongrats ? (
+            <div className="welcomeUser">
+              <p>Congratulations, {username}!</p>
+              <p>You earned: &#8377; {currentQuestionAmount}</p>
+              {showNextQuestionLabel && (
+                <p>Question No: {questionNumber + 1}</p>
+              )}
+            </div>
+          ) : showSorry ? (
+            <div className="welcomeUser">
+              <p>Sorry, {username}!</p>
+              <p>Wrong answer.</p>
+            </div>
+          ) : (
+            <>
+              <div className="question"> {question?.question} </div>
+              <div className="options">
+                {question?.options.map((a) => (
+                  <div
+                    key={a.text}
+                    className={selectedAnswer === a ? className : "option"}
+                    onClick={() => handleClick(a)}
+                  >
+                    {" "}
+                    {a.text}{" "}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       )}
     </div>

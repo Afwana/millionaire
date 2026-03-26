@@ -1,26 +1,48 @@
-.main{
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0),#020230), url("./assets/wwtbam_image2.jpg") center;
+.main {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0), #020230),
+    url("./assets/wwtbam_image2.jpg") center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-.moneyItem{
+.moneyItem {
   display: flex;
   align-items: center;
   padding: 5px;
   border-radius: 5px;
 }
-.moneyItem.active{
+.moneyItem.active {
   background-color: #28b628;
 }
-.moneyItemNumber{
+.moneyItemNumber {
   font-size: 18px;
   font-weight: 300;
   width: 45%;
 }
-.moneyItemAmount{
+.moneyItemAmount {
   font-size: 20px;
   font-weight: 500;
 }
+
+.start {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 30%;
+}
+
+.welcomeUser {
+  background-color: #22074d;
+  font-weight: 700;
+  padding: 24px;
+  border-radius: 12px;
+  font-size: x-large;
+}
+
 .quiz {
   height: 100%;
   display: flex;
@@ -29,7 +51,7 @@
   justify-content: space-around;
 }
 
-.question{
+.question {
   width: 80%;
   background: linear-gradient(#100241, #000000);
   border: 2px solid #ffffff;
@@ -40,7 +62,7 @@
   margin-bottom: 10px;
 }
 
-.options{
+.options {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -48,7 +70,7 @@
   margin-top: 30px;
 }
 
-.option{
+.option {
   width: 40%;
   padding: 10px;
   text-align: center;
@@ -61,11 +83,12 @@
   margin: 0 10px 20px 10px;
 }
 
-.option:hover, .option.active {
+.option:hover,
+.option.active {
   background: mediumblue;
 }
 
-.option.correct{
+.option.correct {
   animation: correct 3s ease forwards;
 }
 
@@ -80,12 +103,13 @@
   60% {
     background: linear-gradient(#0e0124, #22074d);
   }
-  62%,100% {
+  62%,
+  100% {
     background: green;
   }
 }
 
-.option.wrong{
+.option.wrong {
   animation: wrong 3s ease forwards;
 }
 
@@ -100,12 +124,13 @@
   60% {
     background: linear-gradient(#0e0124, #22074d);
   }
-  62%,100% {
+  62%,
+  100% {
     background: red;
   }
 }
 
-.endText{
+.endText {
   position: relative;
   top: 0;
   bottom: 0;
@@ -113,4 +138,3 @@
   right: 0;
   margin: auto;
 }
-

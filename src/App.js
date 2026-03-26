@@ -10,6 +10,7 @@ function App() {
   const [stop, setStop] = useState(false);
   const [earned, setEarned] = useState("0");
   const [quizStarted, setQuizStarted] = useState(false);
+  const [timerPaused, setTimerPaused] = useState(false);
 
   const data = [
     {
@@ -378,6 +379,32 @@ function App() {
       setEarned(moneyPyramid.find((m) => m.id === questionNumber - 1).amount);
   }, [moneyPyramid, questionNumber]);
 
+  useEffect(() => {
+    if (!quizStarted || stop) return;
+    setTimerPaused(false);
+  }, [questionNumber, quizStarted, stop]);
+
+  const currentQuestionAmount =
+    moneyPyramid.find((m) => m.id === questionNumber)?.amount || "0";
+
+  const resetToStart = () => {
+    setQuestionNumber(1);
+    setEarned("0");
+    setStop(false);
+    setQuizStarted(false);
+    setTimerPaused(false);
+    setUsername(null);
+  };
+
+  useEffect(() => {
+    if (!stop) return;
+    const backToStartTimer = setTimeout(() => {
+      resetToStart();
+    }, 8200);
+
+    return () => clearTimeout(backToStartTimer);
+  }, [stop]);
+
   return (
     <div
       className="app d-flex"
@@ -390,7 +417,9 @@ function App() {
             style={{ width: "75%", flexDirection: "column" }}
           >
             {stop ? (
-              <h1 className="endText"> You Earned : {earned} </h1>
+              <h1 className="endText">
+                Congratulations, {username}! Total earned: &#8377; {earned}
+              </h1>
             ) : (
               <>
                 {quizStarted && (
@@ -418,17 +447,21 @@ function App() {
                       <Timer
                         setStop={setStop}
                         questionNumber={questionNumber}
+                        isPaused={timerPaused}
                       />
                     </div>
                   </div>
                 )}
                 <div className="bottom" style={{ height: "50%" }}>
                   <Quiz
+                    username={username}
                     data={data}
                     setStop={setStop}
                     questionNumber={questionNumber}
                     setQuestionNumber={setQuestionNumber}
+                    currentQuestionAmount={currentQuestionAmount}
                     onQuizStart={() => setQuizStarted(true)}
+                    onAnswerSelected={() => setTimerPaused(true)}
                   />
                 </div>
               </>
