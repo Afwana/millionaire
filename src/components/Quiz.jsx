@@ -64,19 +64,27 @@ export function Quiz({
     setSelectedAnswer(a);
     setClassName("option active");
     if (a.correct) {
-      delay(1200, () => {
+      // Keep selected answer blue for 5s, then run green blink animation for 3s.
+      delay(5000, () => {
+        setClassName("option correct");
+      });
+
+      // After blink, show congrats message and play correct sound.
+      delay(8000, () => {
         correctAnswer();
         setShowNextQuestionLabel(false);
         setShowCongrats(true);
       });
 
-      delay(6200, () => {
+      // Show next question number after 5s inside congrats message.
+      delay(13000, () => {
         if (questionNumber < data.length) {
           setShowNextQuestionLabel(true);
         }
       });
 
-      delay(8200, () => {
+      // Move to next question after 7s of congrats message.
+      delay(15000, () => {
         setShowCongrats(false);
         setShowNextQuestionLabel(false);
         setSelectedAnswer(null);
@@ -88,12 +96,19 @@ export function Quiz({
         }
       });
     } else {
-      delay(1200, () => {
+      // Keep selected answer blue for 5s, then run red blink animation for 3s.
+      delay(5000, () => {
+        setClassName("option wrong");
+      });
+
+      // After blink, show sorry message and play wrong sound.
+      delay(8000, () => {
         wrongAnswer();
         setShowSorry(true);
       });
 
-      delay(8200, () => {
+      // Keep sorry message for 7s, then end quiz flow as usual.
+      delay(15000, () => {
         setShowSorry(false);
         setStop(true);
       });
@@ -101,7 +116,6 @@ export function Quiz({
   };
   return (
     <div>
-      {/* when get in to after username */}
       <div className="quizcontainer">
         {showWelcome && (
           <div className="start">
@@ -112,7 +126,6 @@ export function Quiz({
           </div>
         )}
       </div>
-      {/* start quiz, if correct - play correctAnswer with text of earned money after correctAnswer sound play sound letsPlay with text of Question No, if wrong play wrongAnswer with text of earned money after wrongAnswer sound play sound end with text of Thnak you */}
       {!showWelcome && (
         <div className="quiz">
           {showCongrats ? (

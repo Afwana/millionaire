@@ -4,6 +4,7 @@ import Quiz from "./components/Quiz";
 import Timer from "./components/Timer";
 import Start from "./components/Start";
 import { fetchTriviaQuizData } from "./utils/trivia";
+import { FALLBACK_QUIZ_DATA } from "./utils/datas";
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -12,6 +13,7 @@ function App() {
   const [earned, setEarned] = useState("0");
   const [quizStarted, setQuizStarted] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false);
+  const [timerReady, setTimerReady] = useState(false);
   const [quizData, setQuizData] = useState([]);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
 
@@ -47,18 +49,34 @@ function App() {
     setTimerPaused(false);
   }, [questionNumber, quizStarted, stop]);
 
+  useEffect(() => {
+    if (!quizStarted || stop) {
+      setTimerReady(false);
+      return;
+    }
+
+    setTimerReady(false);
+    const startTimerDelay = setTimeout(() => {
+      setTimerReady(true);
+    }, 8000);
+
+    return () => clearTimeout(startTimerDelay);
+  }, [quizStarted, questionNumber, stop]);
+
   const loadTriviaQuestions = async () => {
     try {
       setIsLoadingQuestions(true);
       const fetchedQuestions = await fetchTriviaQuizData({
-        perCategory: 10,
+        perCategory: 50,
         difficulty: "medium",
         type: "multiple",
         finalCount: 15,
       });
-      setQuizData(fetchedQuestions.slice(0, 15));
+      if (fetchedQuestions.length >= 15) {
+        setQuizData(fetchedQuestions.slice(0, 15));
+      }
     } catch (error) {
-      setQuizData([]);
+      console.error("Trivia API failed, using fallback data:", error);
     } finally {
       setIsLoadingQuestions(false);
     }
@@ -77,6 +95,7 @@ function App() {
     setStop(false);
     setQuizStarted(false);
     setTimerPaused(false);
+    setTimerReady(false);
     setUsername(null);
     loadTriviaQuestions();
   };
@@ -112,29 +131,33 @@ function App() {
                     className="top"
                     style={{ height: "50%", position: "relative" }}
                   >
-                    <div
-                      className="timer"
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        borderRadius: "50%",
-                        border: "5px solid #ffffff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "30px",
-                        fontWeight: "700",
-                        position: "absolute",
-                        bottom: "30px",
-                        left: "100px",
-                      }}
-                    >
-                      <Timer
-                        setStop={setStop}
-                        questionNumber={questionNumber}
-                        isPaused={timerPaused}
-                      />
-                    </div>
+                    {timerReady ? (
+                      <div
+                        className="timer"
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          borderRadius: "50%",
+                          border: "5px solid #ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "30px",
+                          fontWeight: "700",
+                          position: "absolute",
+                          bottom: "30px",
+                          left: "100px",
+                        }}
+                      >
+                        <Timer
+                          setStop={setStop}
+                          questionNumber={questionNumber}
+                          isPaused={timerPaused}
+                        />
+                      </div>
+                    ) : (
+                      <span></span>
+                    )}
                   </div>
                 )}
                 <div className="bottom" style={{ height: "50%" }}>
@@ -145,7 +168,7 @@ function App() {
                   ) : (
                     <Quiz
                       username={username}
-                      data={quizData}
+                      data={quizData.length > 0 ? quizData : FALLBACK_QUIZ_DATA}
                       setStop={setStop}
                       questionNumber={questionNumber}
                       setQuestionNumber={setQuestionNumber}
@@ -168,6 +191,7 @@ function App() {
             >
               {moneyPyramid.map((m) => (
                 <li
+                  key={m.id}
                   className={
                     questionNumber === m.id ? "moneyItem active" : "moneyItem"
                   }
